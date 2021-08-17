@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "pg": "^8.7.1"
+  },
+  "name": "sdc-products",
+  "description": "readme",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon ./server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rfe4-Slate/products.git"
+  },
+  "author": "Juan Pablo Bustamante",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rfe4-Slate/products/issues"
+  },
+  "homepage": "https://github.com/rfe4-Slate/products#readme"
+}

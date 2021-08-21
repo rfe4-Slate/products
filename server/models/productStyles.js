@@ -2,43 +2,36 @@ var db = require('../db');
 
 module.exports = {
   getProductStyles: (cb, id) => {
-    var result = {product_id: id};
     var pgQuery = `
-      SELECT * FROM mysdcschema.styles
-      WHERE mysdcschema.styles.product_id='${id}';
-      `
-    var pgQuery2 = `
-      SELECT feature, value FROM mysdcschema.features
-      WHERE product_id='${id}';
+    SELECT
+      styles.id AS style_id,
+      style_name AS "name",
+      original_price,
+      COALESCE(sale_price, '100') AS sale_price2,
+      default_style AS "default?",
+      array_agg(
+        DISTINCT jsonb_build_object(
+          'thumbnail_url', photos.thumbnail_url,
+          'url', photos.photo_url
+        )
+      ) AS photos,
+      COALESCE(
+      json_object_agg(
+        skus.id, json_build_object(
+          'quantity', quantity,
+          'size', size
+        )
+      )
+       FILTER (WHERE skus.id IS NOT NULL), '{}') as skus
+    FROM mysdcschema.styles
+    LEFT JOIN mysdcschema.photos ON mysdcschema.styles.id = mysdcschema.photos.style_id
+    LEFT JOIN mysdcschema.skus ON mysdcschema.styles.id = mysdcschema.skus.style_id
+
+    WHERE mysdcschema.styles.product_id = '${id}'
+    GROUP BY styles.id;
     `
-
     db.query(pgQuery)
-      .then((data)=> {result.results = data.rows})
-      .then(()=>{
-
-        result.results.forEach((style)=>{
-          var photoQuery = `
-        SELECT thumbnail_url, photo_url
-        FROM mysdcschema.photos
-        WHERE style_id='${style.id}';
-        `;
-        db.query(photoQuery)
-          .then((data)=>{style.photos = data.rows})
-          .catch((error)=>{console.log(error)})
-        })
-        // .then(()=> {cb(result)})
-      })
-
-      // .then(()=>{
-      //   db.query(pgQuery2)
-      //   .then((data)=>{(result.features = data.rows)})
-      //   .then(console.log(result))
-      //   .then(()=>{cb(result)})
-      // })
+      .then((data)=>{cb(data.rows[0])})
       .catch((error)=>{console.log(error)})
-
-      Promise.all(result)
-        .then(()=>{cb(result)})
-        .catch((error)=>{'error in All'})
   }
 }

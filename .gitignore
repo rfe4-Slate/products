@@ -1,0 +1,5 @@
+# Dependency directories (remove the comment below to include it)
+csvFiles/
+package-lock.json
+node_modules
+DS_Store

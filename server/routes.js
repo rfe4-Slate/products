@@ -9,6 +9,8 @@ router.get(`/products/:product_id`, controller.productFeatures.get);
 
 router.get(`/products/:product_id/styles`, controller.productStyles.get);
 
+router.get(`/products/:product_id/related`, controller.getRelated.get);
+
 
 
 
